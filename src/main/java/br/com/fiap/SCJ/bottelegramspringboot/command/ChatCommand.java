@@ -4,8 +4,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 public interface ChatCommand {
 
-    String comando();
+    boolean comando(final String comando);
 
-    String execute(Update update);
+    String execute(final String comando, Update update);
 
 }

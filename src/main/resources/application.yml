@@ -15,7 +15,7 @@ logging:
     br.com.fiap.SCJ.bottelegramspringboot: TRACE
 
 bot:
-  username: JarvisFIAP_bot
+  username: ${BOT_USER_NAME}
   token: ${BOT_TOKEN}
 
 service:

@@ -53,6 +53,8 @@ public class PollingBot extends TelegramLongPollingBot {
             String chatId = BotUtils.getChatID(update);
             sendTypingAction(chatId);
 
+            BotUtils.setBotUserName(getBotUsername());
+
             SendMessage sendMessage = new SendMessage();
             sendMessage.setChatId(chatId);
 
@@ -63,9 +65,9 @@ public class PollingBot extends TelegramLongPollingBot {
                 String comando = commandPatternMatcher.group(1).toLowerCase();
 
                 chatCommands.stream()
-                        .filter(it -> it.comando().equals(comando))
+                        .filter(it -> it.comando(comando))
                         .findFirst()
-                        .ifPresentOrElse(it -> sendMessage.setText(it.execute(update)), () -> sendMessage.setText("Desculpe, comando não cadastrado..."));
+                        .ifPresentOrElse(it -> sendMessage.setText(it.execute(comando, update)), () -> sendMessage.setText("Desculpe, comando não cadastrado..."));
 
             } else {
                 sendMessage.setText("Desculpe, não entendi...");
