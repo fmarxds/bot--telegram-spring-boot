@@ -9,8 +9,17 @@ import java.util.Optional;
 
 public class BotUtils {
 
+    private static String botUserName;
     private BotUtils() {
         // utils class
+    }
+
+    public static void setBotUserName(String botUserName) {
+        BotUtils.botUserName = botUserName;
+    }
+
+    public static String getBotUserName() {
+        return botUserName;
     }
 
     public static String getChatID(Update update) {
