@@ -70,6 +70,7 @@ public class PollingBot extends TelegramLongPollingBot {
                 chatCommands.stream()
                         .filter(it -> it.comando().equals(comando))
                         .findFirst()
+<<<<<<< HEAD
                         .ifPresentOrElse(it -> {
                             try {
                                 sendMessage.setText(it.execute(update, param));
@@ -79,6 +80,9 @@ public class PollingBot extends TelegramLongPollingBot {
                                 e.printStackTrace();
                             }
                         }, () -> sendMessage.setText("Desculpe, comando não cadastrado..."));
+=======
+                        .ifPresentOrElse(it -> sendMessage.setText(it.execute(update, param)), () -> sendMessage.setText("Desculpe, comando não cadastrado..."));
+>>>>>>> e719aa8ab56ff8e075de55bf50d31fa7725ffa2a
 
             } else {
                 sendMessage.setText("Desculpe, não entendi...");
