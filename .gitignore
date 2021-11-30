@@ -13,6 +13,7 @@
 *.log
 *.log.*
 *.sig
+.gradle/
 
 pkg/
 

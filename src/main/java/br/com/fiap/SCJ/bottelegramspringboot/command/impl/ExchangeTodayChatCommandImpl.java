@@ -15,46 +15,24 @@ import java.math.RoundingMode;
 public class ExchangeTodayChatCommandImpl implements ChatCommand {
 
     private final ExchangeService exchangeService;
-    private enum COMANDOS {
-        DOLAR("dolar", "$"),
-        REAL("real", "R$"),
-        EURO("euro", "€");
+    private static final String COMANDO = "dolar";
 
-        private String mensagem;
-        private String resposta;
-        COMANDOS(String mensagem, String resposta) {
-            this.mensagem = mensagem;
-            this.resposta = resposta;
-        }
-
-        public static boolean existeComando(final String comando) {
-            for (COMANDOS comandos : COMANDOS.values()) {
-                if (comandos.mensagem.equalsIgnoreCase(comando))
-                    return true;
-            }
-            return false;
-        }
-
-        public static String getMensagem(final String comando) {
-            for (COMANDOS comandos : COMANDOS.values()) {
-                if (comandos.mensagem.equalsIgnoreCase(comando))
-                    return comandos.resposta;
-            }
-            return "Não entendi. Poderia escrever novamente?";
-        }
+    @Override
+    public String comando() {
+        return COMANDO;
     }
 
     @Override
-    public boolean comando(final String comando) {
-        return COMANDOS.existeComando(comando);
-    }
-
-    @Override
-    public String execute(final String comando, Update update) {
+    public String execute(Update update, String param) {
 
         ExchangeTodayOutput exchangeTodayOutput = exchangeService.exchangeToday(new ExchangeTodayInput());
 
-        return exchangeTodayOutput.getValue().setScale(2, RoundingMode.HALF_UP).toPlainString();
+        String exchangeFormatted = exchangeTodayOutput
+                .getValue()
+                .setScale(2, RoundingMode.HALF_UP)
+                .toPlainString();
+
+        return String.format("1.00 USD\n%s BRL", exchangeFormatted);
 
     }
 

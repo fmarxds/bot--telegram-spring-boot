@@ -18,6 +18,8 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,7 +33,9 @@ public class PollingBot extends TelegramLongPollingBot {
     private final BotProperties botProperties;
     private final BotMessagesLogger botMessagesLogger;
     private final List<ChatCommand> chatCommands;
-    private static final Pattern COMMAND_PATTERN = Pattern.compile("/(\\w*)");
+    private static final int REGEX_GROUP_COMMAND = 1;
+    private static final int REGEX_GROUP_PARAM = 2;
+    private static final Pattern COMMAND_PATTERN = Pattern.compile("/(\\w*)\\s*(.*)");
 
     @Override
     public String getBotUsername() {
@@ -53,8 +57,6 @@ public class PollingBot extends TelegramLongPollingBot {
             String chatId = BotUtils.getChatID(update);
             sendTypingAction(chatId);
 
-            BotUtils.setBotUserName(getBotUsername());
-
             SendMessage sendMessage = new SendMessage();
             sendMessage.setChatId(chatId);
 
@@ -62,12 +64,21 @@ public class PollingBot extends TelegramLongPollingBot {
 
             if (commandPatternMatcher.matches()) {
 
-                String comando = commandPatternMatcher.group(1).toLowerCase();
+                String comando = getRegexGroup(commandPatternMatcher, REGEX_GROUP_COMMAND);
+                String param = getRegexGroup(commandPatternMatcher, REGEX_GROUP_PARAM);
 
                 chatCommands.stream()
-                        .filter(it -> it.comando(comando))
+                        .filter(it -> it.comando().equals(comando))
                         .findFirst()
-                        .ifPresentOrElse(it -> sendMessage.setText(it.execute(comando, update)), () -> sendMessage.setText("Desculpe, comando não cadastrado..."));
+                        .ifPresentOrElse(it -> {
+                            try {
+                                sendMessage.setText(it.execute(update, param));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            } catch (URISyntaxException e) {
+                                e.printStackTrace();
+                            }
+                        }, () -> sendMessage.setText("Desculpe, comando não cadastrado..."));
 
             } else {
                 sendMessage.setText("Desculpe, não entendi...");
@@ -85,16 +96,20 @@ public class PollingBot extends TelegramLongPollingBot {
     }
 
     private void sendTypingAction(String chatId) {
-
         try {
-
             execute(new SendChatAction(chatId, ActionType.TYPING.name()));
-
         } catch (TelegramApiException e) {
             log.error("An error ocurred during sending typing action", e);
             throw new ActionNotSentException(e.getLocalizedMessage());
         }
+    }
 
+    private String getRegexGroup(Matcher commandPatternMatcher, int group) {
+        try {
+            return commandPatternMatcher.group(group).toLowerCase();
+        } catch (Exception e) {
+            return "";
+        }
     }
 
 }

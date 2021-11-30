@@ -4,22 +4,15 @@ import br.com.fiap.SCJ.bottelegramspringboot.exception.ChatNotFoundException;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
 
 public class BotUtils {
 
-    private static String botUserName;
     private BotUtils() {
         // utils class
-    }
-
-    public static void setBotUserName(String botUserName) {
-        BotUtils.botUserName = botUserName;
-    }
-
-    public static String getBotUserName() {
-        return botUserName;
     }
 
     public static String getChatID(Update update) {
@@ -28,6 +21,14 @@ public class BotUtils {
                 .map(Message::getChatId)
                 .map(Objects::toString)
                 .orElseThrow(() -> new ChatNotFoundException("Chat nao encontrado no 'update' message"));
+    }
+
+    public static String converteJsonEmString(BufferedReader buffereReader) throws IOException {
+        String resposta, jsonEmString = "";
+        while ((resposta = buffereReader.readLine()) != null) {
+            jsonEmString += resposta;
+        }
+        return jsonEmString;
     }
 
 }
