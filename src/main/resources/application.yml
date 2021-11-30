@@ -24,6 +24,13 @@ service:
     defaultCoinCodeFrom: USD
     defaultCoinCodeTo: BRL
 
+  weather:
+    url: https://api.hgbrasil.com/weather?
+    firstKey: key=a3299fbb
+    secondKey: key=88615687
+    fields_weather: '&fields=only_results,temp,date,condition_code,description,currently,city,humidity,sunrise,sunset,condition_slug,wind_speedy&city_name='
+    fields_forecast: '&array_limit=7&fields=only_results,city,forecast,date,weekday,max,min,description,condition&city_name='
+
 comandos:
   -
       nome: /hello
@@ -33,10 +40,10 @@ comandos:
       descricao: cotação atual
   -
       nome: /clima <cidade>
-      descricao: clima na cidade
+      descricao: clima na cidade - <cidade> opcional
   -
-      nome: /previsao-tempo <cidade>
-      descricao: previsão do tempo na cidade
+      nome: /previsao_tempo <cidade>
+      descricao: previsão do tempo na cidade - <cidade> opcional
   -
       nome: /calc <expressao>
       descricao: calcula expressão matemática
